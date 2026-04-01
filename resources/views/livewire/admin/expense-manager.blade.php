@@ -152,17 +152,23 @@
         <!-- Inventory Content -->
         <div class="space-y-4">
             <!-- Filters and Add Button -->
-            <div class="flex items-center justify-between">
-                <div class="max-w-md flex-1">
+            <div class="flex items-center gap-4">
+                <div class="flex-1 max-w-md">
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                             </svg>
                         </div>
-                        <input type="text" wire:model.live="search" class="block w-full pl-10 pr-4 py-2.5 bg-[#111827] border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-[#0d9488] text-sm" placeholder="Cari inventaris...">
+                        <input type="text" wire:model.live="search" class="block w-full pl-10 pr-4 py-2.5 bg-[#111827] border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-[#0d9488] text-sm" placeholder="Cari barang atau kamar...">
                     </div>
                 </div>
+                <select wire:model.live="filterRoom" class="bg-[#111827] border border-gray-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-[#0d9488]">
+                    <option value="">Semua Kamar</option>
+                    @foreach($rooms as $room)
+                        <option value="{{ $room->id }}">{{ $room->code }}</option>
+                    @endforeach
+                </select>
                 <button wire:click="openModal('inventory')" class="inline-flex items-center gap-2 px-5 py-2.5 bg-[#0d9488] hover:bg-[#0f766e] text-white text-sm font-semibold rounded-xl transition-colors">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
@@ -171,75 +177,88 @@
                 </button>
             </div>
 
-            <!-- Inventory Table -->
-            <div class="bg-[#111827] border border-gray-800/50 rounded-2xl overflow-hidden">
-                <table class="w-full">
-                    <thead>
-                        <tr class="border-b border-gray-800/50">
-                            <th class="text-left text-xs font-semibold text-gray-400 uppercase tracking-wider px-6 py-4">Nama Barang</th>
-                            <th class="text-left text-xs font-semibold text-gray-400 uppercase tracking-wider px-6 py-4">Kategori</th>
-                            <th class="text-left text-xs font-semibold text-gray-400 uppercase tracking-wider px-6 py-4">Lokasi</th>
-                            <th class="text-center text-xs font-semibold text-gray-400 uppercase tracking-wider px-6 py-4">Qty</th>
-                            <th class="text-left text-xs font-semibold text-gray-400 uppercase tracking-wider px-6 py-4">Kondisi</th>
-                            <th class="text-right text-xs font-semibold text-gray-400 uppercase tracking-wider px-6 py-4">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-800/50">
-                        @forelse($inventories as $inventory)
-                            <tr class="hover:bg-gray-800/30 transition-colors">
-                                <td class="px-6 py-4">
-                                    <span class="text-white font-medium text-sm">{{ $inventory->name }}</span>
-                                </td>
-                                <td class="px-6 py-4">
-                                    <span class="text-gray-300 text-sm">{{ $inventory->category }}</span>
-                                </td>
-                                <td class="px-6 py-4">
-                                    <span class="text-gray-300 text-sm">{{ $inventory->room?->code ?? $inventory->property?->name ?? 'Umum' }}</span>
-                                </td>
-                                <td class="px-6 py-4 text-center">
-                                    <span class="text-white text-sm">{{ $inventory->quantity }} {{ $inventory->unit }}</span>
-                                </td>
-                                <td class="px-6 py-4">
-                                    <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-medium {{ $inventory->condition_color }}">
-                                        {{ $inventory->condition_label }}
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4">
-                                    <div class="flex items-center justify-end gap-2">
-                                        <button wire:click="editInventory({{ $inventory->id }})" class="p-2 text-gray-400 hover:text-white transition-colors">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
-                                            </svg>
-                                        </button>
-                                        <button wire:click="deleteInventory({{ $inventory->id }})" wire:confirm="Apakah Anda yakin ingin menghapus inventaris ini?" class="p-2 text-gray-400 hover:text-red-500 transition-colors">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                                            </svg>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="6" class="px-6 py-12 text-center">
-                                    <div class="w-12 h-12 bg-gray-800/50 rounded-full flex items-center justify-center mx-auto mb-3">
-                                        <svg class="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
-                                        </svg>
-                                    </div>
-                                    <h3 class="text-gray-300 font-medium mb-1">Belum ada inventaris</h3>
-                                    <p class="text-gray-500 text-sm mb-4">Tambahkan inventaris pertama Anda</p>
-                                    <button wire:click="openModal('inventory')" class="inline-flex items-center gap-2 px-4 py-2 bg-[#0d9488] hover:bg-[#0f766e] text-white text-sm font-medium rounded-lg transition-colors">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-                                        </svg>
-                                        Tambah Inventaris
-                                    </button>
-                                </td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
+            <!-- Room Inventory Cards -->
+            <div class="space-y-4">
+                @php
+                    $groupedInventories = $inventories->groupBy(function($item) {
+                        return $item->room?->code ?? 'Umum';
+                    });
+                @endphp
+
+                @forelse($groupedInventories as $roomCode => $roomItems)
+                    <div class="bg-[#111827] border border-gray-800/50 rounded-2xl overflow-hidden">
+                        <!-- Room Header -->
+                        <div class="px-6 py-4 border-b border-gray-800/50 flex items-center gap-2">
+                            <svg class="w-5 h-5 text-[#0d9488]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                            </svg>
+                            <span class="text-white font-semibold">Kamar {{ $roomCode }}</span>
+                            <span class="text-gray-500 text-sm">({{ $roomItems->count() }} barang)</span>
+                        </div>
+
+                        <!-- Items Table -->
+                        <table class="w-full">
+                            <thead>
+                                <tr class="border-b border-gray-800/30">
+                                    <th class="text-left text-xs font-medium text-gray-500 uppercase px-6 py-3">Nama Barang</th>
+                                    <th class="text-left text-xs font-medium text-gray-500 uppercase px-6 py-3 w-20">Qty</th>
+                                    <th class="text-left text-xs font-medium text-gray-500 uppercase px-6 py-3 w-32">Kondisi</th>
+                                    <th class="text-left text-xs font-medium text-gray-500 uppercase px-6 py-3">Catatan</th>
+                                    <th class="text-right text-xs font-medium text-gray-500 uppercase px-6 py-3 w-16"></th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-800/30">
+                                @foreach($roomItems as $item)
+                                    <tr class="hover:bg-gray-800/20 transition-colors">
+                                        <td class="px-6 py-3">
+                                            <span class="text-white text-sm font-medium">{{ $item->name }}</span>
+                                        </td>
+                                        <td class="px-6 py-3">
+                                            <span class="text-gray-300 text-sm">{{ $item->quantity }}</span>
+                                        </td>
+                                        <td class="px-6 py-3">
+                                            @if($item->condition === 'good' || $item->condition === 'new')
+                                                <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-medium bg-green-500/10 text-green-500">Baik</span>
+                                            @elseif($item->condition === 'fair')
+                                                <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-medium bg-yellow-500/10 text-yellow-500">Cukup</span>
+                                            @elseif($item->condition === 'poor')
+                                                <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-medium bg-orange-500/10 text-orange-500">Rusak Ringan</span>
+                                            @elseif($item->condition === 'broken')
+                                                <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-medium bg-red-500/10 text-red-500">Rusak</span>
+                                            @endif
+                                        </td>
+                                        <td class="px-6 py-3">
+                                            <span class="text-gray-500 text-sm">{{ $item->notes ?? '-' }}</span>
+                                        </td>
+                                        <td class="px-6 py-3 text-right">
+                                            <button wire:click="deleteInventory({{ $item->id }})" wire:confirm="Apakah Anda yakin ingin menghapus inventaris ini?" class="p-1.5 text-gray-500 hover:text-red-500 transition-colors">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                                </svg>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                @empty
+                    <div class="bg-[#111827] border border-gray-800/50 rounded-2xl p-12 text-center">
+                        <div class="w-12 h-12 bg-gray-800/50 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <svg class="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                            </svg>
+                        </div>
+                        <h3 class="text-gray-300 font-medium mb-1">Belum ada inventaris</h3>
+                        <p class="text-gray-500 text-sm mb-4">Tambahkan inventaris pertama Anda</p>
+                        <button wire:click="openModal('inventory')" class="inline-flex items-center gap-2 px-4 py-2 bg-[#0d9488] hover:bg-[#0f766e] text-white text-sm font-medium rounded-lg transition-colors">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                            </svg>
+                            Tambah Inventaris
+                        </button>
+                    </div>
+                @endforelse
             </div>
         </div>
     @endif

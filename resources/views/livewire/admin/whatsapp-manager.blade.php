@@ -12,11 +12,17 @@
                 <p class="text-gray-400 text-sm">Kelola komunikasi dengan penghuni kost</p>
             </div>
         </div>
-        <div class="flex items-center gap-2 px-3 py-1.5 bg-gray-800/50 rounded-full text-sm text-gray-400">
-            <span class="w-2 h-2 bg-gray-500 rounded-full"></span>
-            Belum Dikonfigurasi
+        <div class="flex items-center gap-2 px-3 py-1.5 {{ $isConfigured ? 'bg-green-500/20' : 'bg-gray-800/50' }} rounded-full text-sm {{ $isConfigured ? 'text-green-500' : 'text-gray-400' }}">
+            <span class="w-2 h-2 {{ $isConfigured ? 'bg-green-500' : 'bg-gray-500' }} rounded-full"></span>
+            {{ $isConfigured ? 'Terkoneksi' : 'Belum Dikonfigurasi' }}
         </div>
     </div>
+
+    @if (session()->has('message'))
+        <div class="mb-4 bg-[#0d9488]/10 border border-[#0d9488]/20 text-[#0d9488] px-4 py-3 rounded-xl text-sm">
+            {{ session('message') }}
+        </div>
+    @endif
 
     <!-- Tabs -->
     <div class="flex items-center gap-1 mb-4 bg-[#111827] p-1 rounded-xl w-fit">
@@ -77,7 +83,7 @@
 
                     <!-- Tenant List -->
                     <div class="flex-1 overflow-y-auto">
-                        @foreach($mockTenants as $index => $tenant)
+                        @forelse($tenants as $tenant)
                             <div wire:click="selectTenant({{ $tenant['id'] }})" class="flex items-center gap-3 p-4 hover:bg-gray-800/50 cursor-pointer transition-colors border-b border-gray-800/30 {{ $selectedTenant == $tenant['id'] ? 'bg-gray-800/50' : '' }}">
                                 <div class="relative">
                                     <div class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold text-white" style="background-color: {{ $tenant['avatar_color'] }};">
@@ -102,7 +108,11 @@
                                     <p class="text-gray-500 text-xs">{{ $tenant['time'] }}</p>
                                 </div>
                             </div>
-                        @endforeach
+                        @empty
+                            <div class="p-8 text-center">
+                                <p class="text-gray-500 text-sm">Tidak ada penghuni aktif</p>
+                            </div>
+                        @endforelse
                     </div>
                 </div>
 
@@ -175,26 +185,17 @@
                 <div class="flex gap-4 mb-6">
                     <div class="bg-[#0d9488]/20 border border-[#0d9488]/30 rounded-2xl p-4 flex-1">
                         <p class="text-gray-400 text-sm mb-1">Total Aktif</p>
-                        <p class="text-3xl font-bold text-[#0d9488]">3</p>
+                        <p class="text-3xl font-bold text-[#0d9488]">{{ $tenants->count() }}</p>
                     </div>
                     <div class="bg-red-500/10 border border-red-500/30 rounded-2xl p-4 flex-1">
                         <p class="text-gray-400 text-sm mb-1">Menunggak</p>
-                        <p class="text-3xl font-bold text-red-500">2</p>
+                        <p class="text-3xl font-bold text-red-500">{{ $tenants->where('menunggak', true)->count() }}</p>
                     </div>
                 </div>
 
                 <!-- Grid Cards -->
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    @php
-                        $penghuniDetails = [
-                            ['id' => 1, 'name' => 'Budi Santoso', 'initials' => 'BS', 'avatar_color' => '#10b981', 'room' => 'Kamar A1', 'phone' => '081234567890', 'price' => '1.500.000', 'due_date' => '2025-04-05', 'status' => 'Aktif', 'menunggak' => false],
-                            ['id' => 2, 'name' => 'Siti Rahayu', 'initials' => 'SR', 'avatar_color' => '#0d9488', 'room' => 'Kamar B3', 'phone' => '082345678901', 'price' => '1.200.000', 'due_date' => '2025-04-03', 'status' => 'Aktif', 'menunggak' => false],
-                            ['id' => 3, 'name' => 'Andi Prasetyo', 'initials' => 'AP', 'avatar_color' => '#059669', 'room' => 'Kamar C2', 'phone' => '083456789012', 'price' => '2.400.000', 'due_date' => '2025-03-25', 'status' => 'Menunggak', 'menunggak' => true],
-                            ['id' => 4, 'name' => 'Dewi Kusuma', 'initials' => 'DK', 'avatar_color' => '#047857', 'room' => 'Kamar A4', 'phone' => '084567890123', 'price' => '1.500.000', 'due_date' => '2025-04-10', 'status' => 'Aktif', 'menunggak' => false],
-                            ['id' => 5, 'name' => 'Reza Firmansyah', 'initials' => 'RF', 'avatar_color' => '#065f46', 'room' => 'Kamar D1', 'phone' => '085678901234', 'price' => '1.800.000', 'due_date' => '2025-03-20', 'status' => 'Menunggak', 'menunggak' => true],
-                        ];
-                    @endphp
-                    @foreach($penghuniDetails as $p)
+                    @forelse($tenants as $p)
                         <div class="bg-[#1f2937] border border-gray-800/50 rounded-2xl p-4">
                             <!-- Header -->
                             <div class="flex items-center gap-3 mb-4">
@@ -205,7 +206,7 @@
                                     <div class="flex items-center gap-2">
                                         <h4 class="text-white font-medium">{{ $p['name'] }}</h4>
                                     </div>
-                                    <span class="px-2 py-0.5 {{ $p['menunggak'] ? 'bg-red-500/20 text-red-400' : 'bg-[#0d9488]/20 text-[#0d9488]' }} text-xs rounded-full">{{ $p['status'] }}</span>
+                                    <span class="px-2 py-0.5 {{ $p['menunggak'] ? 'bg-red-500/20 text-red-400' : 'bg-[#0d9488]/20 text-[#0d9488]' }} text-xs rounded-full">{{ $p['menunggak'] ? 'Menunggak' : 'Aktif' }}</span>
                                 </div>
                             </div>
 
@@ -239,13 +240,13 @@
                                     <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
                                     WA
                                 </a>
-                                <button class="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-[#0f172a] hover:bg-gray-800 text-white text-sm rounded-lg transition-colors">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                                    Templat
-                                </button>
                             </div>
                         </div>
-                    @endforeach
+                    @empty
+                        <div class="col-span-3 text-center py-12">
+                            <p class="text-gray-500 text-sm">Tidak ada penghuni aktif</p>
+                        </div>
+                    @endforelse
                 </div>
             </div>
         @elseif($activeTab === 'templat')
@@ -254,7 +255,7 @@
                 <!-- Header -->
                 <div class="flex items-center justify-between mb-6">
                     <h2 class="text-lg font-semibold text-white">Templat Pesan</h2>
-                    <button class="flex items-center gap-2 px-4 py-2 bg-[#0d9488] hover:bg-[#0f766e] text-white text-sm font-medium rounded-xl transition-colors">
+                    <button wire:click="openTemplateModal" class="flex items-center gap-2 px-4 py-2 bg-[#0d9488] hover:bg-[#0f766e] text-white text-sm font-medium rounded-xl transition-colors">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
                         Buat Templat +
                     </button>
@@ -262,41 +263,30 @@
 
                 <!-- Template Grid -->
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    @php
-                        $templates = [
-                            ['icon' => 'bell', 'icon_color' => '#3b82f6', 'tag' => 'tagihan', 'tag_color' => 'bg-red-500/20 text-red-400', 'title' => 'Peringat Tagihan H-7', 'content' => "Halo *{{nama}}*, \n\nIni peringatan bahwa tagihan kost Anda akan jatuh..."],
-                            ['icon' => 'calendar', 'icon_color' => '#ec4899', 'tag' => 'tagihan', 'tag_color' => 'bg-red-500/20 text-red-400', 'title' => 'Tagihan Jatuh Tempo Hari Ini', 'content' => "*PENGINGAT PENTING*\n\nYth, {{nama}}, ..."],
-                            ['icon' => 'alert', 'icon_color' => '#ef4444', 'tag' => 'tagihan', 'tag_color' => 'bg-red-500/20 text-red-400', 'title' => 'Tunggakan & Denda', 'content' => "*PEMBERITAHUAN TUNGGAKAN*\n\nYth, {{nama}}, ..."],
-                            ['icon' => 'check', 'icon_color' => '#22c55e', 'tag' => 'konfirmasi', 'tag_color' => 'bg-green-500/20 text-green-400', 'title' => 'Konfirmasi Pembayaran', 'content' => "✅ *PEMBAYARAN DITERIMA*\n\nHalo *{{nama}}*, ..."],
-                            ['icon' => 'user', 'icon_color' => '#8b5cf6', 'tag' => 'info', 'tag_color' => 'bg-yellow-500/20 text-yellow-400', 'title' => 'Selamat Datang Penghuni Baru', 'content' => "🎉 *SELAMAT DATANG!*\n\nHalo *{{nama}}*, ..."],
-                            ['icon' => 'document', 'icon_color' => '#f97316', 'tag' => 'info', 'tag_color' => 'bg-yellow-500/20 text-yellow-400', 'title' => 'Perpanjangan Kontrak', 'content' => "📝 *PERPANJANGAN KONTRAK*\n\nHalo *{{nama}}*, ..."],
-                            ['icon' => 'speaker', 'icon_color' => '#6366f1', 'tag' => 'broadcast', 'tag_color' => 'bg-blue-500/20 text-blue-400', 'title' => 'Broadcast Pengumuman', 'content' => "📢 *PENGUMUMAN*\n\nKepada seluruh penghuni, ..."],
-                        ];
-                    @endphp
-                    @foreach($templates as $t)
+                    @forelse($templates as $t)
                         <div class="bg-[#1f2937] border border-gray-800/50 rounded-2xl p-4">
                             <!-- Header -->
                             <div class="flex items-start gap-3 mb-3">
-                                <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background-color: {{ $t['icon_color'] }}20;">
-                                    @if($t['icon'] === 'bell')
-                                        <svg class="w-5 h-5" style="color: {{ $t['icon_color'] }};" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"/></svg>
-                                    @elseif($t['icon'] === 'calendar')
-                                        <svg class="w-5 h-5" style="color: {{ $t['icon_color'] }};" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/></svg>
-                                    @elseif($t['icon'] === 'alert')
-                                        <svg class="w-5 h-5" style="color: {{ $t['icon_color'] }};" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
-                                    @elseif($t['icon'] === 'check')
-                                        <svg class="w-5 h-5" style="color: {{ $t['icon_color'] }};" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
-                                    @elseif($t['icon'] === 'user')
-                                        <svg class="w-5 h-5" style="color: {{ $t['icon_color'] }};" fill="currentColor" viewBox="0 0 20 20"><path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 012 2v7a2 2 0 01-2 2h-1a2 2 0 01-2-2v-1H5v1a2 2 0 01-2 2H2a2 2 0 01-2-2v-7a2 2 0 012-2 18 18 0 001.579-.943 4.38 4.38 0 001.9-.723A7.008 7.008 0 0113 8z"/></svg>
-                                    @elseif($t['icon'] === 'document')
-                                        <svg class="w-5 h-5" style="color: {{ $t['icon_color'] }};" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd"/></svg>
+                                <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background-color: {{ $t['icon_color'] ?? '#3b82f6' }}20;">
+                                    @if(($t['icon'] ?? 'bell') === 'bell')
+                                        <svg class="w-5 h-5" style="color: {{ $t['icon_color'] ?? '#3b82f6' }};" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"/></svg>
+                                    @elseif(($t['icon'] ?? '') === 'calendar')
+                                        <svg class="w-5 h-5" style="color: {{ $t['icon_color'] ?? '#3b82f6' }};" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/></svg>
+                                    @elseif(($t['icon'] ?? '') === 'alert')
+                                        <svg class="w-5 h-5" style="color: {{ $t['icon_color'] ?? '#3b82f6' }};" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+                                    @elseif(($t['icon'] ?? '') === 'check')
+                                        <svg class="w-5 h-5" style="color: {{ $t['icon_color'] ?? '#3b82f6' }};" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                                    @elseif(($t['icon'] ?? '') === 'user')
+                                        <svg class="w-5 h-5" style="color: {{ $t['icon_color'] ?? '#3b82f6' }};" fill="currentColor" viewBox="0 0 20 20"><path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 012 2v7a2 2 0 01-2 2h-1a2 2 0 01-2-2v-1H5v1a2 2 0 01-2 2H2a2 2 0 01-2-2v-7a2 2 0 012-2 18 18 0 001.579-.943 4.38 4.38 0 001.9-.723A7.008 7.008 0 0113 8z"/></svg>
+                                    @elseif(($t['icon'] ?? '') === 'document')
+                                        <svg class="w-5 h-5" style="color: {{ $t['icon_color'] ?? '#3b82f6' }};" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd"/></svg>
                                     @else
-                                        <svg class="w-5 h-5" style="color: {{ $t['icon_color'] }};" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 3a1 1 0 00-1.447-.894L8.763 6H5a3 3 0 000 6h.28l1.771 5.316A1 1 0 008 18h1a1 1 0 001-1v-4.382l6.553 3.276A1 1 0 0018 15V3z" clip-rule="evenodd"/></svg>
+                                        <svg class="w-5 h-5" style="color: {{ $t['icon_color'] ?? '#3b82f6' }};" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 3a1 1 0 00-1.447-.894L8.763 6H5a3 3 0 000 6h.28l1.771 5.316A1 1 0 008 18h1a1 1 0 001-1v-4.382l6.553 3.276A1 1 0 0018 15V3z" clip-rule="evenodd"/></svg>
                                     @endif
                                 </div>
                                 <div class="flex-1">
-                                    <span class="px-2 py-0.5 {{ $t['tag_color'] }} text-xs rounded-full">{{ $t['tag'] }}</span>
-                                    <h4 class="text-white font-medium mt-1">{{ $t['title'] }}</h4>
+                                    <span class="px-2 py-0.5 {{ $t['tag_color'] ?? 'bg-blue-500/20 text-blue-400' }} text-xs rounded-full">{{ $t['tag'] ?? 'info' }}</span>
+                                    <h4 class="text-white font-medium mt-1">{{ $t['name'] }}</h4>
                                 </div>
                             </div>
 
@@ -305,17 +295,69 @@
 
                             <!-- Actions -->
                             <div class="flex gap-2">
-                                <button class="flex-1 px-3 py-2 bg-[#22c55e] hover:bg-[#16a34a] text-white text-sm font-medium rounded-lg transition-colors">
+                                <button wire:click="selectTenant({{ $t['id'] }})" class="flex-1 px-3 py-2 bg-[#22c55e] hover:bg-[#16a34a] text-white text-sm font-medium rounded-lg transition-colors">
                                     Kirim ke Penghuni
                                 </button>
-                                <button class="px-3 py-2 bg-gray-700 hover:bg-gray-600 text-white text-sm rounded-lg transition-colors">
+                                <button wire:click="openTemplateModal({{ $t['id'] }})" class="px-3 py-2 bg-gray-700 hover:bg-gray-600 text-white text-sm rounded-lg transition-colors">
                                     Edit
+                                </button>
+                                <button wire:click="deleteTemplate({{ $t['id'] }})" wire:confirm="Hapus template ini?" class="px-3 py-2 bg-red-500/20 hover:bg-red-500/30 text-red-400 text-sm rounded-lg transition-colors">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                                 </button>
                             </div>
                         </div>
-                    @endforeach
+                    @empty
+                        <div class="col-span-3 text-center py-12">
+                            <p class="text-gray-500 text-sm mb-4">Belum ada template</p>
+                            <button wire:click="openTemplateModal" class="px-4 py-2 bg-[#0d9488] hover:bg-[#0f766e] text-white text-sm font-medium rounded-lg transition-colors">
+                                Buat Template Pertama
+                            </button>
+                        </div>
+                    @endforelse
                 </div>
             </div>
+
+            <!-- Template Modal -->
+            @if($showTemplateModal)
+                <div class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                    <div class="bg-[#111827] border border-gray-800/50 rounded-2xl w-full max-w-lg">
+                        <div class="p-6 border-b border-gray-800/50 flex items-center justify-between">
+                            <h3 class="text-lg font-semibold text-white">{{ $editingTemplate ? 'Edit Template' : 'Buat Template Baru' }}</h3>
+                            <button wire:click="closeTemplateModal" class="text-gray-500 hover:text-white transition-colors">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                            </button>
+                        </div>
+                        <form wire:submit="saveTemplate" class="p-6 space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-400 mb-2">Nama Template</label>
+                                <input type="text" wire:model="templateName" class="w-full bg-gray-900 border border-gray-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#0d9488]" placeholder="Contoh: Peringatan Tagihan">
+                                @error('templateName') <span class="text-red-400 text-xs">{{ $message }}</span> @enderror
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-400 mb-2">Tag</label>
+                                <select wire:model="templateTag" class="w-full bg-gray-900 border border-gray-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#0d9488]">
+                                    <option value="tagihan">Tagihan</option>
+                                    <option value="konfirmasi">Konfirmasi</option>
+                                    <option value="info">Info</option>
+                                    <option value="broadcast">Broadcast</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-400 mb-2">Isi Pesan</label>
+                                <textarea wire:model="templateContent" rows="6" class="w-full bg-gray-900 border border-gray-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#0d9488]" placeholder="Tulis pesan template..."></textarea>
+                                @error('templateContent') <span class="text-red-400 text-xs">{{ $message }}</span> @enderror
+                                <p class="text-gray-500 text-xs mt-2">Gunakan @{{nama}} untuk nama penghuni, @{{kamar}} untuk nomor kamar</p>
+                            </div>
+                            <div class="flex items-center justify-end gap-3 pt-4">
+                                <button type="button" wire:click="closeTemplateModal" class="px-4 py-2.5 text-gray-400 hover:text-white transition-colors">Batal</button>
+                                <button type="submit" class="px-6 py-2.5 bg-[#0d9488] hover:bg-[#0f766e] text-white font-medium rounded-xl transition-colors">
+                                    {{ $editingTemplate ? 'Simpan' : 'Buat' }}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            @endif
         @elseif($activeTab === 'broadcast')
             <!-- Tab Broadcast - Broadcast Message Layout -->
             <div class="flex h-full">
@@ -323,16 +365,16 @@
                 <div class="w-[45%] border-r border-gray-800/50 flex flex-col p-4">
                     <!-- Filter Buttons -->
                     <div class="flex gap-2 mb-4">
-                        <button class="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white text-sm rounded-lg transition-colors">Pilih Semua</button>
-                        <button class="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white text-sm rounded-lg transition-colors">Hanya Menunggak</button>
-                        <button class="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white text-sm rounded-lg transition-colors">Reset</button>
+                        <button wire:click="selectAllTenants" class="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white text-sm rounded-lg transition-colors">Pilih Semua</button>
+                        <button wire:click="selectOverdueTenants" class="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white text-sm rounded-lg transition-colors">Hanya Menunggak</button>
+                        <button wire:click="resetSelection" class="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white text-sm rounded-lg transition-colors">Reset</button>
                     </div>
 
                     <!-- Tenant List with Checkboxes -->
                     <div class="flex-1 overflow-y-auto space-y-2">
-                        @foreach($mockTenants as $tenant)
+                        @forelse($tenants as $tenant)
                             <div class="flex items-center gap-3 p-3 bg-[#1f2937] rounded-xl border border-gray-800/50">
-                                <input type="checkbox" class="w-4 h-4 rounded border-gray-600 bg-gray-700 text-[#0d9488] focus:ring-[#0d9488]" value="{{ $tenant['id'] }}">
+                                <input type="checkbox" wire:model.live="selectedTenants" value="{{ $tenant['id'] }}" class="w-4 h-4 rounded border-gray-600 bg-gray-700 text-[#0d9488] focus:ring-[#0d9488]">
                                 <div class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold text-white" style="background-color: {{ $tenant['avatar_color'] }};">
                                     {{ $tenant['initials'] }}
                                 </div>
@@ -346,12 +388,16 @@
                                     <span class="px-2 py-0.5 bg-red-500 text-white text-xs rounded-full">Menunggak</span>
                                 @endif
                             </div>
-                        @endforeach
+                        @empty
+                            <div class="text-center py-8">
+                                <p class="text-gray-500 text-sm">Tidak ada penghuni aktif</p>
+                            </div>
+                        @endforelse
                     </div>
 
                     <!-- Footer Counter -->
                     <div class="mt-4 pt-4 border-t border-gray-800/50">
-                        <p class="text-gray-400 text-sm">Terpiih: <span class="text-white font-medium">0</span> penghuni</p>
+                        <p class="text-gray-400 text-sm">Terpilih: <span class="text-white font-medium">{{ count($selectedTenants) }}</span> penghuni</p>
                     </div>
                 </div>
 
@@ -359,29 +405,25 @@
                 <div class="flex-1 flex flex-col p-4">
                     <!-- Template Dropdown -->
                     <div class="mb-4">
-                        <select class="w-full bg-[#0f172a] border border-gray-700 rounded-xl px-4 py-3 text-gray-400 text-sm focus:outline-none focus:border-[#0d9488] cursor-pointer">
-                            <option>Pilih templat...</option>
-                            <option>Peringatan Tagihan H-7</option>
-                            <option>Tagihan Jatuh Tempo Hari Ini</option>
-                            <option>Tunggakan & Denda</option>
-                            <option>Konfirmasi Pembayaran</option>
-                            <option>Selamat Datang Penghuni Baru</option>
-                            <option>Perpanjangan Kontrak</option>
-                            <option>Broadcast Pengumuman</option>
+                        <select wire:model="broadcastTemplate" wire:change="loadTemplateToBroadcast" class="w-full bg-[#0f172a] border border-gray-700 rounded-xl px-4 py-3 text-gray-400 text-sm focus:outline-none focus:border-[#0d9488] cursor-pointer">
+                            <option value="">Pilih templat...</option>
+                            @foreach($templates as $t)
+                                <option value="{{ $t['id'] }}">{{ $t['name'] }}</option>
+                            @endforeach
                         </select>
                     </div>
 
                     <!-- Message Textarea -->
                     <div class="flex-1 mb-4">
-                        <textarea placeholder="Tulis pesan broadcast..." class="w-full h-full bg-[#0f172a] border border-gray-700 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-[#0d9488] resize-none"></textarea>
+                        <textarea wire:model="broadcastMessage" placeholder="Tulis pesan broadcast..." class="w-full h-full bg-[#0f172a] border border-gray-700 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-[#0d9488] resize-none"></textarea>
                     </div>
 
                     <!-- Footer -->
                     <div class="space-y-3">
-                        <p class="text-gray-500 text-sm">0 penerima</p>
-                        <button class="w-full flex items-center justify-center gap-2 px-4 py-3 bg-[#22c55e] hover:bg-[#16a34a] text-white text-sm font-medium rounded-xl transition-colors">
+                        <p class="text-gray-500 text-sm">{{ count($selectedTenants) }} penerima</p>
+                        <button wire:click="sendBroadcast" class="w-full flex items-center justify-center gap-2 px-4 py-3 bg-[#22c55e] hover:bg-[#16a34a] text-white text-sm font-medium rounded-xl transition-colors">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/></svg>
-                            Kirim ke 0 Penghuni
+                            Kirim ke {{ count($selectedTenants) }} Penghuni
                         </button>
                     </div>
                 </div>
@@ -393,18 +435,18 @@
                 <div class="flex-1 bg-[#1f2937] border border-gray-800/50 rounded-2xl p-5">
                     <div class="flex items-center gap-2 mb-5">
                         <svg class="w-5 h-5 text-[#0d9488]" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/></svg>
-                        <h3 class="text-white font-semibold">Jadwal Peringat</h3>
+                        <h3 class="text-white font-semibold">Jadwal Peringatan</h3>
                     </div>
 
                     <div class="space-y-3">
                         @php
                             $reminders = [
-                                ['id' => 'h7', 'label' => 'H-7', 'desc' => '7 hari sebelum jatuh tempo', 'icon' => 'calendar', 'icon_color' => '#3b82f6', 'checked' => true],
-                                ['id' => 'h3', 'label' => 'H-3', 'desc' => '3 hari sebelum jatuh tempo', 'icon' => 'clock', 'icon_color' => '#0d9488', 'checked' => true],
-                                ['id' => 'h1', 'label' => 'H-1', 'desc' => '1 hari sebelum jatuh tempo', 'icon' => 'alert', 'icon_color' => '#f59e0b', 'checked' => false],
-                                ['id' => 'hplus1', 'label' => 'H+1', 'desc' => '1 hari setelah jatuh tempo', 'icon' => 'bell', 'icon_color' => '#ef4444', 'checked' => true],
-                                ['id' => 'hplus3', 'label' => 'H+3', 'desc' => '3 hari tunggakan + denda', 'icon' => 'money', 'icon_color' => '#22c55e', 'checked' => false],
-                                ['id' => 'hplus7', 'label' => 'H+7', 'desc' => '7 hari tunggakan, peringatan keras', 'icon' => 'warning', 'icon_color' => '#8b5cf6', 'checked' => false],
+                                ['id' => 'h7', 'label' => 'H-7', 'desc' => '7 hari sebelum jatuh tempo', 'icon' => 'calendar', 'icon_color' => '#3b82f6'],
+                                ['id' => 'h3', 'label' => 'H-3', 'desc' => '3 hari sebelum jatuh tempo', 'icon' => 'clock', 'icon_color' => '#0d9488'],
+                                ['id' => 'h1', 'label' => 'H-1', 'desc' => '1 hari sebelum jatuh tempo', 'icon' => 'alert', 'icon_color' => '#f59e0b'],
+                                ['id' => 'hplus1', 'label' => 'H+1', 'desc' => '1 hari setelah jatuh tempo', 'icon' => 'bell', 'icon_color' => '#ef4444'],
+                                ['id' => 'hplus3', 'label' => 'H+3', 'desc' => '3 hari tunggakan + denda', 'icon' => 'money', 'icon_color' => '#22c55e'],
+                                ['id' => 'hplus7', 'label' => 'H+7', 'desc' => '7 hari tunggakan, peringatan keras', 'icon' => 'warning', 'icon_color' => '#8b5cf6'],
                             ];
                         @endphp
                         @foreach($reminders as $r)
@@ -429,7 +471,7 @@
                                     </div>
                                 </div>
                                 <label class="relative inline-flex items-center cursor-pointer">
-                                    <input type="checkbox" class="sr-only peer" {{ $r['checked'] ? 'checked' : '' }}>
+                                    <input type="checkbox" wire:model="reminderSettings.{{ $r['id'] }}" class="sr-only peer">
                                     <div class="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#22c55e]"></div>
                                 </label>
                             </div>
@@ -451,7 +493,7 @@
                             <div>
                                 <label class="text-gray-400 text-sm mb-2 block">Jam Kirim Otomatis</label>
                                 <div class="relative">
-                                    <input type="text" value="09:00" readonly class="w-full bg-[#0f172a] border border-gray-700 rounded-xl px-4 py-3 text-white text-sm focus:outline-none">
+                                    <input type="text" wire:model="autoSendTime" class="w-full bg-[#0f172a] border border-gray-700 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-[#0d9488]">
                                     <svg class="w-4 h-4 text-gray-500 absolute right-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                                 </div>
                             </div>
@@ -482,7 +524,7 @@
                         </div>
 
                         <!-- Save Button -->
-                        <button class="w-full mt-5 py-3 bg-gradient-to-r from-[#0d9488] to-[#059669] hover:from-[#0f766e] hover:to-[#047857] text-white font-medium rounded-xl transition-all">
+                        <button wire:click="saveReminderSettings" class="w-full mt-5 py-3 bg-gradient-to-r from-[#0d9488] to-[#059669] hover:from-[#0f766e] hover:to-[#047857] text-white font-medium rounded-xl transition-all">
                             Simpan Pengaturan
                         </button>
                     </div>
@@ -517,15 +559,15 @@
                 <!-- Status Koneksi -->
                 <div class="bg-[#1f2937] border border-gray-800/50 rounded-2xl p-5 mb-6">
                     <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 bg-gray-800 rounded-full flex items-center justify-center">
-                            <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0"/></svg>
+                        <div class="w-12 h-12 {{ $isConfigured ? 'bg-green-500/20' : 'bg-gray-800' }} rounded-full flex items-center justify-center">
+                            <svg class="w-6 h-6 {{ $isConfigured ? 'text-green-500' : 'text-gray-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0"/></svg>
                         </div>
                         <div class="flex-1">
                             <div class="flex items-center gap-2 mb-1">
                                 <h3 class="text-white font-semibold">Status Koneksi WhatsApp</h3>
-                                <span class="px-2 py-0.5 bg-gray-700 text-gray-300 text-xs rounded-full">Belum Diatur</span>
+                                <span class="px-2 py-0.5 {{ $isConfigured ? 'bg-green-500/20 text-green-500' : 'bg-gray-700 text-gray-300' }} text-xs rounded-full">{{ $isConfigured ? 'Terkoneksi' : 'Belum Diatur' }}</span>
                             </div>
-                            <p class="text-gray-400 text-sm">Konfigurasi API WhatsApp Anda untuk mulai mengirim pesan otomatis</p>
+                            <p class="text-gray-400 text-sm">{{ $isConfigured ? 'API WhatsApp aktif dan siap digunakan' : 'Konfigurasi API WhatsApp Anda untuk mulai mengirim pesan otomatis' }}</p>
                         </div>
                     </div>
                 </div>
@@ -542,9 +584,9 @@
                         <div class="mb-5">
                             <label class="text-gray-400 text-sm mb-2 block">Provider WhatsApp</label>
                             <div class="relative">
-                                <select class="w-full bg-[#0f172a] border border-gray-700 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-[#0d9488] appearance-none">
-                                    <option>Fonnte</option>
-                                    <option>Wablas</option>
+                                <select wire:model="apiProvider" class="w-full bg-[#0f172a] border border-gray-700 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-[#0d9488] appearance-none">
+                                    <option value="fonnte">Fonnte</option>
+                                    <option value="wablas">Wablas</option>
                                 </select>
                                 <svg class="w-4 h-4 text-gray-500 absolute right-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                             </div>
@@ -554,7 +596,7 @@
                         <div class="mb-5">
                             <label class="text-gray-400 text-sm mb-2 block">API Token / Key</label>
                             <div class="relative">
-                                <input type="password" placeholder="Masukkan token dari dashboard Fonnte" class="w-full bg-[#0f172a] border border-gray-700 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-[#0d9488]">
+                                <input type="password" wire:model="apiToken" placeholder="Masukkan token dari dashboard Fonnte" class="w-full bg-[#0f172a] border border-gray-700 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-[#0d9488]">
                                 <svg class="w-4 h-4 text-gray-500 absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
                             </div>
                             <p class="text-gray-500 text-xs mt-2">Dapatkan token di <span class="text-gray-400">fonnte.com</span> → <span class="text-gray-400">Dashboard</span> → <span class="text-gray-400">API Token</span></p>
@@ -563,12 +605,12 @@
                         <!-- Nomor Pengirim -->
                         <div class="mb-5">
                             <label class="text-gray-400 text-sm mb-2 block">Nomor Pengirim</label>
-                            <input type="text" value="081234567890" class="w-full bg-[#0f172a] border border-gray-700 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-[#0d9488]">
+                            <input type="text" wire:model="senderNumber" placeholder="081234567890" class="w-full bg-[#0f172a] border border-gray-700 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-[#0d9488]">
                             <p class="text-gray-500 text-xs mt-2">Nomor WhatsApp yang terdaftar di Fonnte</p>
                         </div>
 
                         <!-- Tes Koneksi -->
-                        <div class="flex items-center justify-between p-3 bg-[#0f172a] rounded-xl border border-gray-800/30 mb-4">
+                        <div wire:click="testConnection" class="flex items-center justify-between p-3 bg-[#0f172a] rounded-xl border border-gray-800/30 mb-4 cursor-pointer hover:bg-gray-800/50 transition-colors">
                             <div class="flex items-center gap-2">
                                 <svg class="w-5 h-5 text-[#0d9488]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0"/></svg>
                                 <div>
@@ -579,7 +621,7 @@
                         </div>
 
                         <!-- Save Button -->
-                        <button class="w-full py-3 bg-gradient-to-r from-[#22c55e] to-[#16a34a] hover:from-[#16a34a] hover:to-[#15803d] text-white font-medium rounded-xl transition-all flex items-center justify-center gap-2">
+                        <button wire:click="saveApiSettings" class="w-full py-3 bg-gradient-to-r from-[#22c55e] to-[#16a34a] hover:from-[#16a34a] hover:to-[#15803d] text-white font-medium rounded-xl transition-all flex items-center justify-center gap-2">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-4 4m0 0l-4-4m4 4V4"/></svg>
                             Simpan Pengaturan API
                         </button>

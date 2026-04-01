@@ -14,9 +14,15 @@ class WhatsAppSetting extends Model
         'api_url',
         'device_id',
         'is_connected',
+        'provider',
+        'api_token',
+        'sender_number',
+        'reminder_settings',
+        'auto_send_time',
     ];
 
     protected $casts = [
         'is_connected' => 'boolean',
+        'reminder_settings' => 'array',
     ];
 }

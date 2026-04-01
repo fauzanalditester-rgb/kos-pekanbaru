@@ -89,7 +89,11 @@ class TenantManager extends Component
     public function updatedPropertyId($value)
     {
         $this->room_id = '';
+        $this->dispatch('property-changed');
     }
+    
+    protected $listeners = ['property-changed' => '$refresh'];
+
 
     public function openModal()
     {
@@ -137,7 +141,7 @@ class TenantManager extends Component
             'id_card_number' => $this->id_card_number,
             'address' => $this->address,
             'move_in_date' => $this->move_in_date,
-            'move_out_date' => $this->move_out_date,
+            'move_out_date' => $this->move_out_date ?: null,
             'status' => $this->status,
             'deposit' => $this->deposit,
             'emergency_contact' => $this->emergency_contact,

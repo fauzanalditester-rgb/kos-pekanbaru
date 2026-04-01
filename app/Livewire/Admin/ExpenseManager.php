@@ -16,6 +16,7 @@ class ExpenseManager extends Component
     public $activeTab = 'expense'; // 'expense' or 'inventory'
     public $search = '';
     public $filterCategory = '';
+    public $filterRoom = '';
     public $showModal = false;
     public $isEditing = false;
     public $itemId = null;
@@ -69,13 +70,19 @@ class ExpenseManager extends Component
 
         $inventories = Inventory::with(['property', 'room'])
             ->when($this->search, function ($query) {
-                $query->where('name', 'like', '%' . $this->search . '%');
+                $query->where('name', 'like', '%' . $this->search . '%')
+                      ->orWhereHas('room', function ($q) {
+                          $q->where('code', 'like', '%' . $this->search . '%');
+                      });
+            })
+            ->when($this->filterRoom, function ($query) {
+                $query->where('room_id', $this->filterRoom);
             })
             ->orderBy('purchase_date', 'desc')
             ->get();
 
         $properties = Property::all();
-        $rooms = Room::where('property_id', $this->inventory_property_id)->get();
+        $rooms = Room::all();
         $totalExpense = $expenses->sum('amount');
 
         $categories = [
@@ -203,7 +210,7 @@ class ExpenseManager extends Component
             'quantity' => $this->quantity,
             'unit' => $this->unit,
             'price' => $this->price ?: 0,
-            'purchase_date' => $this->purchase_date,
+            'purchase_date' => $this->purchase_date ?: null,
             'condition' => $this->condition,
             'notes' => $this->inventory_notes,
         ];

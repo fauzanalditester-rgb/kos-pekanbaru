@@ -11,6 +11,9 @@ class InvoiceManager extends Component
 {
     public $search = '';
     public $filterStatus = '';
+    public $showWhatsAppModal = false;
+    public $selectedInvoice = null;
+    public $whatsappMessage = '';
     public $showModal = false;
     public $isEditing = false;
     public $invoiceId = null;
@@ -186,6 +189,31 @@ class InvoiceManager extends Component
         };
 
         return response()->stream($callback, 200, $headers);
+    }
+
+    public function openWhatsAppModal($id)
+    {
+        $this->selectedInvoice = Invoice::with(['tenant', 'room'])->findOrFail($id);
+        $tenant = $this->selectedInvoice->tenant;
+        
+        // Generate default message
+        $this->whatsappMessage = "Halo {$tenant->name},\n\n" .
+            "Ini adalah pengingat tagihan Anda:\n\n" .
+            "No. Invoice: {$this->selectedInvoice->invoice_number}\n" .
+            "Total: Rp " . number_format($this->selectedInvoice->total_amount, 0, ',', '.') . "\n" .
+            "Jatuh Tempo: {$this->selectedInvoice->due_date->format('d M Y')}\n\n" .
+            "Mohon segera melakukan pembayaran.\n\n" .
+            "Terima kasih.";
+            
+        
+        $this->showWhatsAppModal = true;
+    }
+
+    public function closeWhatsAppModal()
+    {
+        $this->showWhatsAppModal = false;
+        $this->selectedInvoice = null;
+        $this->whatsappMessage = '';
     }
 
     private function generateInvoiceNumber(): string
