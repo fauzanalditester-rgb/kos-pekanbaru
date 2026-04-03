@@ -5,6 +5,7 @@ namespace App\Livewire\Admin;
 use App\Models\Payment;
 use App\Models\Tenant;
 use App\Models\Invoice;
+use App\Models\Notification;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 
@@ -127,9 +128,21 @@ class PaymentManager extends Component
             $data['proof_photo'] = $this->proofFile->store('payment-proofs', 'public');
         }
 
+        // If status changed to verified, notify customer
+        if ($data['status'] === 'verified' && $oldStatus !== 'verified') {
+            $this->notifyCustomerVerification($payment, $data['status']);
+        }
+
         if ($this->isEditing) {
             $payment = Payment::findOrFail($this->paymentId);
+            $oldStatus = $payment->status;
             $payment->update($data);
+            
+            // If status changed to verified, notify customer
+            if ($data['status'] === 'verified' && $oldStatus !== 'verified') {
+                $this->notifyCustomerVerification($payment, true);
+            }
+            
             session()->flash('message', 'Pembayaran berhasil diperbarui!');
         } else {
             Payment::create($data);
@@ -183,5 +196,26 @@ class PaymentManager extends Component
         $this->status = 'verified';
         $this->proofFile = null;
         $this->isEditing = false;
+    }
+
+    private function notifyCustomerVerification($payment, $isVerified)
+    {
+        $customerUser = \App\Models\User::where('tenant_id', $payment->tenant_id)->first();
+        if ($customerUser) {
+            Notification::notifyCustomer(
+                $customerUser->id,
+                $isVerified ? Notification::TYPE_PAYMENT_VERIFIED : Notification::TYPE_PAYMENT_PENDING,
+                $isVerified ? 'Pembayaran Terverifikasi' : 'Pembayaran Ditolak',
+                $isVerified 
+                    ? 'Pembayaran Anda sebesar Rp ' . number_format($payment->amount, 0, ',', '.') . ' telah diverifikasi.'
+                    : 'Pembayaran Anda sebesar Rp ' . number_format($payment->amount, 0, ',', '.') . ' ditolak.',
+                [
+                    'payment_id' => $payment->id,
+                    'amount' => $payment->amount,
+                    'invoice_id' => $payment->invoice_id,
+                ],
+                '/customer/pembayaran'
+            );
+        }
     }
 }

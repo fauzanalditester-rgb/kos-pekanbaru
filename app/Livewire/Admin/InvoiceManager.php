@@ -153,12 +153,14 @@ class InvoiceManager extends Component
     }
 
     public function sendInvoice($id)
+
     {
         $invoice = Invoice::findOrFail($id);
         $invoice->update(['status' => 'sent']);
+
         session()->flash('message', 'Invoice berhasil dikirim!');
     }
-
+        
     public function exportInvoices()
     {
         $invoices = Invoice::with(['tenant', 'room'])->get();
@@ -204,8 +206,6 @@ class InvoiceManager extends Component
             "Jatuh Tempo: {$this->selectedInvoice->due_date->format('d M Y')}\n\n" .
             "Mohon segera melakukan pembayaran.\n\n" .
             "Terima kasih.";
-            
-        
         $this->showWhatsAppModal = true;
     }
 

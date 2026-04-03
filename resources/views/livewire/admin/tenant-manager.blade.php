@@ -20,6 +20,23 @@
         </div>
     @endif
 
+    <!-- Customer Credentials Display -->
+    @if (session()->has('customer_credentials'))
+        @php $creds = session('customer_credentials'); @endphp
+        <div class="bg-[#0d9488]/20 border-2 border-[#0d9488] rounded-xl p-4 mb-4">
+            <div class="flex items-center gap-2 mb-3">
+                <svg class="w-5 h-5 text-[#0d9488]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                <span class="text-[#0d9488] font-semibold">Akun Customer Berhasil Dibuat!</span>
+            </div>
+            <div class="bg-gray-900 rounded-lg p-3 font-mono text-sm space-y-1">
+                <p class="text-gray-400">Email: <span class="text-white">{{ $creds['email'] }}</span></p>
+                <p class="text-gray-400">Password: <span class="text-white">{{ $creds['password'] }}</span></p>
+                <p class="text-gray-400">Portal: <span class="text-[#0d9488]">/customer</span></p>
+            </div>
+            <p class="text-gray-500 text-xs mt-2">Simpan informasi ini untuk diberikan ke penyewa!</p>
+        </div>
+    @endif
+
     <!-- Search -->
     <div class="max-w-md">
         <div class="relative">
@@ -100,9 +117,9 @@
                         </div>
 
                         <!-- Actions -->
-                        <div class="mt-4 pt-4 border-t border-gray-800/50 flex items-center gap-3">
+                        <div class="mt-4 pt-4 border-t border-gray-800/50 flex items-center gap-2 flex-wrap">
                             @if($tenant->hasIdCard())
-                                <button wire:click="openIdCardModal({{ $tenant->id }})" class="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-gray-800 hover:bg-gray-700 text-gray-300 text-xs font-medium rounded-lg transition-colors">
+                                <button wire:click="openIdCardModal({{ $tenant->id }})" class="flex-1 min-w-[100px] flex items-center justify-center gap-2 px-3 py-2 bg-gray-800 hover:bg-gray-700 text-gray-300 text-xs font-medium rounded-lg transition-colors">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
@@ -110,13 +127,34 @@
                                     Lihat KTP
                                 </button>
                             @else
-                                <button wire:click="openIdCardModal({{ $tenant->id }})" class="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-gray-800 hover:bg-gray-700 text-gray-300 text-xs font-medium rounded-lg transition-colors">
+                                <button wire:click="openIdCardModal({{ $tenant->id }})" class="flex-1 min-w-[100px] flex items-center justify-center gap-2 px-3 py-2 bg-gray-800 hover:bg-gray-700 text-gray-300 text-xs font-medium rounded-lg transition-colors">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
                                     </svg>
                                     Upload KTP
                                 </button>
                             @endif
+
+                            {{-- Generate Customer Account Button --}}
+                            @php
+                                $hasAccount = \App\Models\User::where('tenant_id', $tenant->id)->exists();
+                            @endphp
+                            @if(!$hasAccount)
+                                <button wire:click="generateCustomerAccount({{ $tenant->id }})" wire:confirm="Buat akun customer untuk {{ $tenant->name }}?" class="flex-1 min-w-[100px] flex items-center justify-center gap-2 px-3 py-2 bg-[#0d9488]/20 hover:bg-[#0d9488]/30 text-[#0d9488] text-xs font-medium rounded-lg transition-colors">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
+                                    </svg>
+                                    Buat Akun
+                                </button>
+                            @else
+                                <span class="flex-1 min-w-[100px] flex items-center justify-center gap-2 px-3 py-2 bg-green-500/20 text-green-400 text-xs font-medium rounded-lg cursor-default">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                    </svg>
+                                    Sudah Punya Akun
+                                </span>
+                            @endif
+
                             <button wire:click="editTenant({{ $tenant->id }})" class="p-2 text-gray-400 hover:text-white transition-colors">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>

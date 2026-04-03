@@ -15,14 +15,30 @@ use App\Livewire\Admin\PaymentManager;
 use App\Livewire\Admin\ExpenseManager;
 use App\Livewire\Admin\TemplateInventoryManager;
 use App\Livewire\Admin\SettingsManager;
+use App\Livewire\Admin\UserManager;
 use App\Livewire\Admin\WhatsAppManager;
+use App\Livewire\Customer\Dashboard as CustomerDashboard;
+use App\Livewire\Customer\Tagihan as CustomerTagihan;
+use App\Livewire\Customer\Pembayaran as CustomerPembayaran;
+use App\Livewire\Customer\Kamar as CustomerKamar;
+use App\Livewire\Customer\Profil as CustomerProfil;
 
 Route::get('/', function () {
     return view('welcome');
 });
 
-// Admin Routes (requires authentication)
-Route::middleware(['auth'])->prefix('admin')->group(function () {
+// Customer Routes
+Route::middleware(['auth', 'role:customer'])->prefix('customer')->group(function () {
+    Route::get('/', CustomerDashboard::class)->name('customer.dashboard');
+    Route::get('/dashboard', CustomerDashboard::class)->name('customer.dashboard');
+    Route::get('/tagihan', CustomerTagihan::class)->name('customer.tagihan');
+    Route::get('/pembayaran', CustomerPembayaran::class)->name('customer.pembayaran');
+    Route::get('/kamar', CustomerKamar::class)->name('customer.kamar');
+    Route::get('/profil', CustomerProfil::class)->name('customer.profil');
+});
+
+// Admin Routes - Admin & Super Admin can access
+Route::middleware(['auth', 'role:admin,super_admin'])->prefix('admin')->group(function () {
     Route::get('/', Dashboard::class)->name('admin.dashboard');
     Route::get('/properties', PropertyManager::class)->name('admin.properties');
     Route::get('/kamar', RoomManager::class)->name('admin.kamar');
@@ -32,12 +48,17 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::get('/pengeluaran', ExpenseManager::class)->name('admin.pengeluaran');
     Route::get('/inventaris', TemplateInventoryManager::class)->name('admin.inventaris');
     Route::get('/bookings', BookingManager::class)->name('admin.bookings');
-    Route::get('/finances', FinanceManager::class)->name('admin.finances');
-    Route::get('/laporan', FinanceManager::class)->name('admin.laporan');
     Route::get('/whatsapp', WhatsAppManager::class)->name('admin.whatsapp');
     Route::get('/comments', CommentModerator::class)->name('admin.comments');
     Route::get('/settings', RoomSettings::class)->name('admin.settings');
     Route::get('/pengaturan', SettingsManager::class)->name('admin.pengaturan');
+    Route::get('/users', UserManager::class)->name('admin.users');
+});
+
+// Super Admin Only Routes (Financial Reports)
+Route::middleware(['auth', 'role:super_admin'])->prefix('admin')->group(function () {
+    Route::get('/finances', FinanceManager::class)->name('admin.finances');
+    Route::get('/laporan', FinanceManager::class)->name('admin.laporan');
     Route::get('/finances/export', function () {
         $finances = \App\Models\Finance::latest()->get();
         $filename = "laporan_keuangan_sewavip_" . date('Y-m-d') . ".csv";

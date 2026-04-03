@@ -78,9 +78,16 @@
                     <span>Inventaris</span>
                 </a>
 
+                @if(Auth::user() && Auth::user()->isSuperAdmin())
                 <a href="/admin/laporan" class="flex items-center gap-3.5 px-4 py-3 rounded-2xl text-sm font-semibold transition-all duration-300 {{ request()->is('admin/laporan') ? 'bg-[#0f766e]/10 text-[#0f766e]' : 'text-gray-400 hover:bg-gray-800/50 hover:text-white' }}">
                     <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
                     <span>Laporan</span>
+                </a>
+                @endif
+
+                <a href="/admin/users" class="flex items-center gap-3.5 px-4 py-3 rounded-2xl text-sm font-semibold transition-all duration-300 {{ request()->is('admin/users') ? 'bg-[#0f766e]/10 text-[#0f766e]' : 'text-gray-400 hover:bg-gray-800/50 hover:text-white' }}">
+                    <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                    <span>Manajemen User</span>
                 </a>
 
                 <a href="/admin/whatsapp" class="flex items-center gap-3.5 px-4 py-3 rounded-2xl text-sm font-semibold transition-all duration-300 {{ request()->is('admin/whatsapp') ? 'bg-[#0f766e]/10 text-[#0f766e]' : 'text-gray-400 hover:bg-gray-800/50 hover:text-white' }}">
@@ -107,9 +114,16 @@
                     <div class="w-10 h-10 rounded-xl bg-[#0f766e]/20 flex items-center justify-center text-[#0f766e] font-bold">
                         {{ strtoupper(substr(Auth::user()->name ?? 'A', 0, 1)) }}
                     </div>
-                    <div class="min-w-0">
+                    <div class="min-w-0 flex-1">
                         <p class="text-xs font-bold text-white truncate">{{ Auth::user()->name ?? 'Administrator' }}</p>
-                        <p class="text-[10px] text-gray-500 truncate">{{ Auth::user()->email ?? 'admin@sewavip.com' }}</p>
+                        <div class="flex items-center gap-2">
+                            <p class="text-[10px] text-gray-500 truncate">{{ Auth::user()->email ?? 'admin@sewavip.com' }}</p>
+                            @if(Auth::user()->isSuperAdmin())
+                                <span class="px-1.5 py-0.5 bg-purple-500/20 text-purple-400 text-[9px] rounded">Super Admin</span>
+                            @elseif(Auth::user()->isAdmin())
+                                <span class="px-1.5 py-0.5 bg-blue-500/20 text-blue-400 text-[9px] rounded">Admin</span>
+                            @endif
+                        </div>
                     </div>
                 </div>
                 <form method="POST" action="{{ route('logout') }}" id="logout-form">
@@ -141,10 +155,8 @@
 
                 <div class="flex items-center gap-6">
                     <div class="flex items-center gap-4 text-gray-500">
-                        <button class="p-2.5 bg-gray-900 border border-gray-800/50 rounded-xl text-gray-400 hover:text-white transition-colors relative">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
-                            <span class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-[#111827]"></span>
-                        </button>
+                        {{-- Notification Center --}}
+                        @livewire('admin.notification-center')
                     </div>
                     <div class="w-10 h-10 bg-[#0f766e] text-white rounded-xl flex items-center justify-center font-bold text-sm shadow-lg shadow-[#0f766e]/20 border border-[#0f766e]/50">
                         {{ strtoupper(substr(Auth::user()->name ?? 'A', 0, 1)) }}

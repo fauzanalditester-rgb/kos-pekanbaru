@@ -5,8 +5,11 @@ namespace App\Livewire\Admin;
 use App\Models\Property;
 use App\Models\Room;
 use App\Models\Tenant;
+use App\Models\User;
+use App\Models\Invoice;
 use Livewire\Component;
 use Livewire\WithFileUploads;
+use Illuminate\Support\Facades\Hash;
 
 class TenantManager extends Component
 {
@@ -152,15 +155,21 @@ class TenantManager extends Component
             $tenant->update($data);
             session()->flash('message', 'Penyewa berhasil diperbarui!');
         } else {
-            Tenant::create($data);
+            $tenant = Tenant::create($data);
             
             // Update room status to occupied
             $room = Room::find($this->room_id);
             if ($room && $this->status === 'active') {
                 $room->update(['status' => 'occupied']);
             }
+
+            // AUTO-CREATE CUSTOMER ACCOUNT
+            $this->autoCreateCustomerAccount($tenant);
+
+            // AUTO-GENERATE FIRST INVOICE
+            $this->autoGenerateFirstInvoice($tenant);
             
-            session()->flash('message', 'Penyewa berhasil ditambahkan!');
+            session()->flash('message', 'Penyewa berhasil ditambahkan! Akun customer dan tagihan pertama otomatis dibuat.');
         }
 
         $this->closeModal();
@@ -243,5 +252,80 @@ class TenantManager extends Component
         $this->deposit = 0;
         $this->emergency_contact = '';
         $this->isEditing = false;
+    }
+
+    public function generateCustomerAccount($tenantId)
+    {
+        $tenant = Tenant::findOrFail($tenantId);
+
+        // Check if tenant already has a user account
+        $existingUser = User::where('tenant_id', $tenantId)->first();
+        if ($existingUser) {
+            session()->flash('error', 'Penyewa ini sudah memiliki akun customer! Email: ' . $existingUser->email);
+            return;
+        }
+
+        $this->autoCreateCustomerAccount($tenant);
+        session()->flash('message', 'Akun customer berhasil dibuat!');
+    }
+
+    private function autoCreateCustomerAccount($tenant)
+    {
+        // Generate email from name
+        $email = $tenant->email;
+        if (!$email) {
+            $emailBase = strtolower(str_replace(' ', '.', $tenant->name));
+            $email = $emailBase . '@sewavip.com';
+            
+            // Check if email already exists, add number suffix
+            $counter = 1;
+            $originalEmail = $email;
+            while (User::where('email', $email)->exists()) {
+                $email = str_replace('@', $counter . '@', $originalEmail);
+                $counter++;
+            }
+        }
+
+        // Generate random password
+        $password = substr(str_shuffle('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'), 0, 8);
+
+        // Create user account
+        $user = User::create([
+            'name' => $tenant->name,
+            'email' => $email,
+            'password' => Hash::make($password),
+            'role' => User::ROLE_CUSTOMER,
+            'tenant_id' => $tenant->id,
+        ]);
+
+        // Store credentials in session for display
+        session()->flash('customer_credentials', [
+            'email' => $email,
+            'password' => $password,
+        ]);
+
+        return $user;
+    }
+
+    private function autoGenerateFirstInvoice($tenant)
+    {
+        $room = $tenant->room;
+        if (!$room) return;
+
+        $invoiceNumber = 'INV-' . date('Ymd') . '-' . str_pad($tenant->id, 4, '0', STR_PAD_LEFT);
+        
+        Invoice::create([
+            'tenant_id' => $tenant->id,
+            'room_id' => $room->id,
+            'invoice_number' => $invoiceNumber,
+            'issue_date' => now(),
+            'due_date' => now()->addMonth(),
+            'rent_amount' => $room->price_monthly ?? 0,
+            'additional_amount' => 0,
+            'total_amount' => $room->price_monthly ?? 0,
+            'description' => 'Tagihan sewa kamar pertama',
+            'status' => 'sent',
+            'notes' => 'Auto-generated saat pendaftaran penyewa',
+        ]);
     }
 }

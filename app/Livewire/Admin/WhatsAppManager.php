@@ -78,6 +78,9 @@ class WhatsAppManager extends Component
                     ->take(2)
                     ->join('');
                 
+                // Calculate due date (1 month from move_in_date or last payment)
+                $dueDate = $tenant->move_in_date->copy()->addMonth();
+                
                 return [
                     'id' => $tenant->id,
                     'name' => $tenant->name,
@@ -86,8 +89,8 @@ class WhatsAppManager extends Component
                     'room' => $tenant->room?->code ?? '-',
                     'phone' => $tenant->phone,
                     'price' => number_format($tenant->room?->price_monthly ?? 0, 0, ',', '.'),
-                    'due_date' => $tenant->due_date?->format('Y-m-d') ?? '-',
-                    'menunggak' => $tenant->status === 'overdue',
+                    'due_date' => $dueDate?->format('Y-m-d') ?? '-',
+                    'menunggak' => $tenant->status === 'overdue' || now()->gt($dueDate),
                     'online' => false,
                     'time' => 'Offline',
                 ];
@@ -264,7 +267,7 @@ class WhatsAppManager extends Component
             WhatsAppMessage::create([
                 'tenant_id' => $tenantId,
                 'message' => $this->broadcastMessage,
-                'status' => 'queued',
+                'status' => 'sent',
                 'direction' => 'out',
                 'sent_at' => null,
             ]);
