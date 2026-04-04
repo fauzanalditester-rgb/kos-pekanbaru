@@ -1,4 +1,4 @@
-<div class="relative">
+    <div class="relative">
     <!-- Bell Icon -->
     <button wire:click="toggleDropdown" class="relative p-2 text-gray-400 hover:text-white transition-colors">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -24,8 +24,16 @@ class RoleMiddleware
                 return redirect()->route('customer.dashboard');
             }
             
-            return redirect()->route('admin.dashboard')
-                ->with('error', 'Anda tidak memiliki akses ke halaman tersebut.');
+            // If user is admin/super_admin but trying to access wrong page, 
+            // redirect to admin dashboard
+            if ($user->isAdmin() || $user->isSuperAdmin()) {
+                return redirect()->route('admin.dashboard');
+            }
+            
+            // Fallback - logout and redirect to login
+            auth()->logout();
+            return redirect()->route('login')
+                ->with('error', 'Anda tidak memiliki akses.');
         }
 
         return $next($request);
