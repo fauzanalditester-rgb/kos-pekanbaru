@@ -72,7 +72,7 @@
                 </div>
             </nav>
 
-            <!-- Bottom Section (User & Exit) -->
+            <!-- Bottom Section (User, Keamanan & Exit) -->
             <div class="p-6 border-t border-gray-800/50 space-y-3">
                 <div class="flex items-center gap-3 px-4 py-3 bg-gray-800/30 rounded-2xl border border-gray-800/50">
                     <div class="w-10 h-10 rounded-xl bg-[#0f766e]/20 flex items-center justify-center text-[#0f766e] font-bold">
@@ -86,6 +86,13 @@
                         </div>
                     </div>
                 </div>
+                
+                <!-- Keamanan Section -->
+                <div class="px-4 py-3 space-y-2">
+                    <p class="text-gray-600 text-[10px] uppercase tracking-wider font-bold">Keamanan</p>
+                    <livewire:customer.account-settings />
+                </div>
+                
                 <form method="POST" action="{{ route('logout') }}" id="logout-form">
                     @csrf
                     <button type="submit" class="flex items-center gap-3.5 w-full px-4 py-3 rounded-2xl text-sm font-bold text-red-500/80 hover:bg-red-500/10 hover:text-red-500 transition-all">
