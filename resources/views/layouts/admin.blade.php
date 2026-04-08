@@ -158,8 +158,24 @@
                         {{-- Notification Center --}}
                         @livewire('admin.notification-center')
                     </div>
-                    <div class="w-10 h-10 bg-[#0f766e] text-white rounded-xl flex items-center justify-center font-bold text-sm shadow-lg shadow-[#0f766e]/20 border border-[#0f766e]/50">
-                        {{ strtoupper(substr(Auth::user()->name ?? 'A', 0, 1)) }}
+                    
+                    {{-- User Dropdown --}}
+                    <div class="relative" x-data="{ open: false }" @click.outside="open = false">
+                        <button @click="open = !open" class="flex items-center gap-2 w-10 h-10 bg-[#0f766e] text-white rounded-xl justify-center font-bold text-sm shadow-lg shadow-[#0f766e]/20 border border-[#0f766e]/50 hover:bg-[#0d9488] transition-colors">
+                            {{ strtoupper(substr(Auth::user()->name ?? 'A', 0, 1)) }}
+                        </button>
+                        
+                        <div x-show="open" x-transition class="absolute right-0 mt-2 w-64 bg-[#111827] border border-gray-800 rounded-xl shadow-xl z-50 py-2">
+                            <div class="px-4 py-3 border-b border-gray-800">
+                                <p class="text-white font-semibold text-sm">{{ Auth::user()->name }}</p>
+                                <p class="text-gray-500 text-xs">{{ Auth::user()->email }}</p>
+                            </div>
+                            <div class="px-4 py-3 space-y-2">
+                                <p class="text-gray-600 text-xs uppercase tracking-wider font-bold">Keamanan</p>
+                                <livewire:admin.change-password />
+                                <livewire:admin.change-email />
+                            </div>
+                        </div>
                     </div>
                 </div>
             </header>

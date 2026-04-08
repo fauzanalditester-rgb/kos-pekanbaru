@@ -89,7 +89,7 @@
                 </a>
             </nav>
 
-            <!-- User Profile & Logout -->
+            <!-- User Profile & Security -->
             <div class="p-4 border-t border-gray-800">
                 <div class="flex items-center gap-3 px-4 py-3 bg-gray-800/50 rounded-xl mb-3">
                     <div class="w-10 h-10 bg-purple-600 rounded-lg flex items-center justify-center text-white font-bold">
@@ -100,6 +100,14 @@
                         <p class="text-xs text-purple-400 truncate">{{ Auth::user()->email ?? 'superadmin@sewavip.com' }}</p>
                     </div>
                 </div>
+                
+                <!-- Security Buttons -->
+                <div class="px-4 mb-3 space-y-2">
+                    <p class="text-gray-600 text-xs uppercase tracking-wider font-bold">Keamanan</p>
+                    <livewire:super-admin.change-password />
+                    <livewire:super-admin.change-email />
+                </div>
+                
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
                     <button type="submit" class="flex items-center gap-3 w-full px-4 py-3 rounded-xl text-sm font-medium text-red-400 hover:bg-red-500/10 transition-all">
