@@ -51,12 +51,6 @@
             </button>
         </form>
 
-        <div class="mt-6 text-center text-xs text-gray-500">
-            <p>Default Login:</p>
-            <p class="mt-1">Super Admin: superadmin@sewavip.com / password123</p>
-            <p>Admin: admin@sewavip.com / password123</p>
-            <p>Customer: customer@sewavip.com / password123</p>
-        </div>
     </div>
 </body>
 </html>

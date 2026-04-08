@@ -51,10 +51,6 @@
             </button>
         </form>
 
-        <div class="mt-6 text-center text-xs text-gray-500">
-            <p>Default: customer@sewavip.com / password123</p>
-        </div>
-        
         <div class="mt-4 text-center">
             <a href="/login-admin" class="text-xs text-gray-500 hover:text-gray-400">← Login sebagai Admin</a>
         </div>
