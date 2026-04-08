@@ -51,8 +51,9 @@
             </button>
         </form>
 
-        <div class="mt-4 text-center">
-            <a href="/login-admin" class="text-xs text-gray-500 hover:text-gray-400">Login sebagai Admin →</a>
+        <div class="mt-4 text-center space-y-2">
+            <a href="/forgot-password" class="text-xs text-purple-400 hover:text-purple-300 block">Lupa Password?</a>
+            <a href="/login-admin" class="text-xs text-gray-500 hover:text-gray-400 block">Login sebagai Admin →</a>
         </div>
     </div>
 </body>

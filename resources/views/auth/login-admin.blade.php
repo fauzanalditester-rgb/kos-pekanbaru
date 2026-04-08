@@ -52,9 +52,12 @@
             </button>
         </form>
 
-        <div class="mt-4 text-center space-y-1">
-            <a href="/login-superadmin" class="text-xs text-gray-500 hover:text-gray-400 block">← Login sebagai Super Admin</a>
-            <a href="/login-customer" class="text-xs text-gray-500 hover:text-gray-400 block">Login sebagai Customer →</a>
+        <div class="mt-4 text-center space-y-2">
+            <a href="/forgot-password" class="text-xs text-blue-400 hover:text-blue-300 block">Lupa Password?</a>
+            <div class="space-y-1">
+                <a href="/login-superadmin" class="text-xs text-gray-500 hover:text-gray-400 block">← Login sebagai Super Admin</a>
+                <a href="/login-customer" class="text-xs text-gray-500 hover:text-gray-400 block">Login sebagai Customer →</a>
+            </div>
         </div>
     </div>
 </body>
