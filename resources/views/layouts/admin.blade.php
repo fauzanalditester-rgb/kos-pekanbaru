@@ -172,8 +172,7 @@
                             </div>
                             <div class="px-4 py-3 space-y-2">
                                 <p class="text-gray-600 text-xs uppercase tracking-wider font-bold">Keamanan</p>
-                                <livewire:admin.change-password />
-                                <livewire:admin.change-email />
+                                <livewire:admin.account-settings />
                             </div>
                         </div>
                     </div>

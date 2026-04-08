@@ -104,8 +104,7 @@
                 <!-- Security Buttons -->
                 <div class="px-4 mb-3 space-y-2">
                     <p class="text-gray-600 text-xs uppercase tracking-wider font-bold">Keamanan</p>
-                    <livewire:super-admin.change-password />
-                    <livewire:super-admin.change-email />
+                    <livewire:super-admin.account-settings />
                 </div>
                 
                 <form method="POST" action="{{ route('logout') }}">

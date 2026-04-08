@@ -129,8 +129,7 @@
             <div class="bg-[#1f2937] border border-gray-800/50 rounded-2xl p-6">
                 <h3 class="text-lg font-semibold text-white mb-4">Keamanan Akun</h3>
                 <div class="space-y-3">
-                    <livewire:customer.change-password />
-                    <livewire:customer.change-email />
+                    <livewire:customer.account-settings />
                 </div>
                 <div class="mt-4 pt-4 border-t border-gray-800/50">
                     <div class="flex items-start gap-3">
