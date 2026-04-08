@@ -40,6 +40,7 @@ class PaymentManager extends Component
         'status' => 'required|in:pending,verified,rejected',
         'proofFile' => 'nullable|image|max:2048',
     ];
+    
 
     public function render()
     {
