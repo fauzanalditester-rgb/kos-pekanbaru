@@ -31,14 +31,14 @@
                 <label class="block text-gray-400 text-sm font-medium mb-2">Email</label>
                 <input type="email" name="email" required 
                     class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500"
-                    placeholder="admin@sewavip.com" value="{{ old('email') }}">
+                    value="{{ old('email') }}">
             </div>
 
             <div>
                 <label class="block text-gray-400 text-sm font-medium mb-2">Password</label>
                 <input type="password" name="password" required 
                     class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500"
-                    placeholder="••••••••">
+>
             </div>
 
             <div class="flex items-center">
