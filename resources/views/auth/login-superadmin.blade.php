@@ -19,8 +19,12 @@
         </div>
 
         @if($errors->any())
-            <div class="bg-red-500/10 border border-red-500/20 text-red-400 px-4 py-3 rounded-xl text-sm mb-4">
-                {{ $errors->first() }}
+            <div class="bg-red-500/20 border border-red-500/30 text-red-300 px-4 py-3 rounded-xl text-sm mb-4 font-semibold">
+                @if($errors->has('email'))
+                    {{ $errors->first('email') }}
+                @else
+                    {{ $errors->first() }}
+                @endif
             </div>
         @endif
 
@@ -29,8 +33,11 @@
             <div>
                 <label class="block text-gray-400 text-sm font-medium mb-2">Email</label>
                 <input type="email" name="email" required 
-                    class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-purple-500"
+                    class="w-full bg-gray-800 border {{ $errors->has('email') ? 'border-red-500' : 'border-gray-700' }} rounded-xl px-4 py-3 text-white focus:outline-none focus:border-purple-500"
                     value="{{ old('email') }}">
+                @error('email')
+                    <p class="text-red-400 text-xs mt-1">{{ $message }}</p>
+                @enderror
             </div>
 
             <div>

@@ -30,6 +30,7 @@
                         <span class="text-sm font-bold text-slate-600">{{ strtoupper(substr($comment->user_name, 0, 1)) }}</span>
                     </div>
                     <div class="flex-1 min-w-0">
+                        
                         <div class="flex items-baseline gap-2 mb-1">
                             <span class="text-sm font-extrabold text-slate-900">{{ $comment->user_name }}</span>
                             <span class="text-xs font-medium text-slate-400">{{ $comment->created_at->diffForHumans() }}</span>
