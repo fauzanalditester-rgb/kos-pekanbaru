@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ $title ?? 'Admin - SewaVIP' }}</title>
+    <title>{{ $title ?? 'Admin - Harsasetialiving' }}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
@@ -23,14 +23,14 @@
         <!-- Sidebar -->
         <aside id="sidebar" class="w-72 bg-[#111827] flex-shrink-0 flex flex-col fixed inset-y-0 left-0 z-40 transform -translate-x-full md:translate-x-0 transition-transform duration-300 border-r border-gray-800/50">
             <!-- Logo Section -->
-            <div class="p-8 flex items-center justify-between">
-                <a href="/admin" class="flex items-center gap-3 group">
+            <div class="p-6 flex items-center">
+                <a href="/admin" class="flex items-center gap-3.5 group w-full">
                     <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform">
                         <svg class="w-6 h-6 text-[#0f766e]" fill="currentColor" viewBox="0 0 24 24"><path d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-10a10 10 0 100 20 10 10 0 000-20z"/></svg>
                     </div>
                     <div>
-                        <span class="text-xl font-extrabold tracking-tight text-white block">Sewa<span class="text-[#0f766e]">VIP.</span></span>
-                        <span class="text-[10px] text-gray-500 font-bold tracking-widest uppercase">Admin Panel</span>
+                        <span class="text-xl font-extrabold tracking-tight text-white block">Harsasetia<span class="text-[#0f766e]">living</span></span>
+                        <span class="text-[10px] text-gray-500 font-bold tracking-widest uppercase">Admin</span>
                     </div>
                 </a>
             </div>
@@ -110,37 +110,41 @@
             </nav>
 
             <!-- Bottom Section (User, Keamanan & Exit) -->
-            <div class="p-6 border-t border-gray-800/50 space-y-3">
-                <div class="flex items-center gap-3 px-4 py-3 bg-gray-800/30 rounded-2xl border border-gray-800/50">
-                    <div class="w-10 h-10 rounded-xl bg-[#0f766e]/20 flex items-center justify-center text-[#0f766e] font-bold">
-                        {{ strtoupper(substr(Auth::user()->name ?? 'A', 0, 1)) }}
-                    </div>
-                    <div class="min-w-0 flex-1">
-                        <p class="text-xs font-bold text-white truncate">{{ Auth::user()->name ?? 'Administrator' }}</p>
-                        <div class="flex items-center gap-2">
-                            <p class="text-[10px] text-gray-500 truncate">{{ Auth::user()->email ?? 'admin@sewavip.com' }}</p>
-                            @if(Auth::user()->isSuperAdmin())
-                                <span class="px-1.5 py-0.5 bg-purple-500/20 text-purple-400 text-[9px] rounded">Super Admin</span>
-                            @elseif(Auth::user()->isAdmin())
-                                <span class="px-1.5 py-0.5 bg-blue-500/20 text-blue-400 text-[9px] rounded">Admin</span>
-                            @endif
+            <div class="p-4 border-t border-gray-800/50">
+                <div class="bg-gray-800/30 rounded-2xl border border-gray-800/50 overflow-hidden">
+                    <!-- User Profile Card -->
+                    <div class="flex items-center gap-3 px-4 py-3 border-b border-gray-800/50">
+                        <div class="w-10 h-10 rounded-xl bg-[#0f766e]/20 flex items-center justify-center text-[#0f766e] font-bold">
+                            {{ strtoupper(substr(Auth::user()->name ?? 'A', 0, 1)) }}
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            <p class="text-xs font-bold text-white truncate">{{ Auth::user()->name ?? 'Administrator' }}</p>
+                            <div class="flex items-center gap-2">
+                                <p class="text-[10px] text-gray-500 truncate">{{ Auth::user()->email ?? 'admin@harsasetialiving.com' }}</p>
+                                @if(Auth::user()->isSuperAdmin())
+                                    <span class="px-1.5 py-0.5 bg-purple-500/20 text-purple-400 text-[9px] rounded">Super</span>
+                                @elseif(Auth::user()->isAdmin())
+                                    <span class="px-1.5 py-0.5 bg-blue-500/20 text-blue-400 text-[9px] rounded">Admin</span>
+                                @endif
+                            </div>
                         </div>
                     </div>
+                    
+                    <!-- Keamanan Section -->
+                    <div class="px-4 py-2 border-b border-gray-800/50">
+                        <p class="text-gray-600 text-[9px] uppercase tracking-wider font-bold mb-1.5">Keamanan</p>
+                        <livewire:admin.account-settings />
+                    </div>
+                    
+                    <!-- Logout Button -->
+                    <form method="POST" action="{{ route('logout') }}" id="logout-form">
+                        @csrf
+                        <button type="submit" class="flex items-center gap-3 w-full px-4 py-2.5 text-sm font-semibold text-red-400/80 hover:bg-red-500/10 hover:text-red-400 transition-all">
+                            <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                            <span>Keluar</span>
+                        </button>
+                    </form>
                 </div>
-                
-                <!-- Keamanan Section -->
-                <div class="px-4 py-3 space-y-2">
-                    <p class="text-gray-600 text-[10px] uppercase tracking-wider font-bold">Keamanan</p>
-                    <livewire:admin.account-settings />
-                </div>
-                
-                <form method="POST" action="{{ route('logout') }}" id="logout-form">
-                    @csrf
-                    <button type="submit" class="flex items-center gap-3.5 w-full px-4 py-3 rounded-2xl text-sm font-bold text-red-500/80 hover:bg-red-500/10 hover:text-red-500 transition-all">
-                        <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
-                        <span>Keluar Panel</span>
-                    </button>
-                </form>
             </div>
         </aside>
 

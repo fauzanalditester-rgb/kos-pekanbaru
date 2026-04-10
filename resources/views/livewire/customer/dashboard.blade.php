@@ -11,7 +11,7 @@
         <!-- Welcome Section -->
         <div class="mb-6">
             <h1 class="text-2xl font-bold text-white">Halo, {{ $tenant->name }}!</h1>
-            <p class="text-gray-400">Selamat datang di portal penyewa SewaVIP</p>
+            <p class="text-gray-400">Selamat datang di portal penyewa Harsasetialiving</p>
         </div>
 
         <!-- Stats Cards -->

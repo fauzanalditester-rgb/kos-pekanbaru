@@ -14,9 +14,9 @@ echo "=== TESTING LOGIN ===\n\n";
 
 // Test credentials
 $testLogins = [
-    ['email' => 'superadmin@sewavip.com', 'password' => 'password'],
-    ['email' => 'admin@sewavip.com', 'password' => 'password'],
-    ['email' => 'customer@sewavip.com', 'password' => 'password'],
+    ['email' => 'superadmin@harsasetialiving.com', 'password' => 'password'],
+    ['email' => 'admin@harsasetialiving.com', 'password' => 'password'],
+    ['email' => 'customer@harsasetialiving.com', 'password' => 'password'],
 ];
 
 foreach ($testLogins as $cred) {

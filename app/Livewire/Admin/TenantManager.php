@@ -275,7 +275,7 @@ class TenantManager extends Component
         $email = $tenant->email;
         if (!$email) {
             $emailBase = strtolower(str_replace(' ', '.', $tenant->name));
-            $email = $emailBase . '@sewavip.com';
+            $email = $emailBase . '@harsasetialiving.com';
             
             // Check if email already exists, add number suffix
             $counter = 1;

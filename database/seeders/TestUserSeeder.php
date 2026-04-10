@@ -38,7 +38,7 @@ class TestUserSeeder extends Seeder
 
         // Create tenant
         $tenant = Tenant::firstOrCreate(
-            ['email' => 'customer@sewavip.com'],
+            ['email' => 'customer@harsasetialiving.com'],
             [
                 'property_id' => $property->id,
                 'room_id' => $room->id,
@@ -51,7 +51,7 @@ class TestUserSeeder extends Seeder
 
         // Create customer user
         User::firstOrCreate(
-            ['email' => 'customer@sewavip.com'],
+            ['email' => 'customer@harsasetialiving.com'],
             [
                 'name' => 'Customer',
                 'password' => Hash::make('password'),

@@ -12,7 +12,7 @@ class UserSeeder extends Seeder
     {
         // Super Admin - akses penuh
         User::updateOrCreate(
-            ['email' => 'superadmin@sewavip.com'],
+            ['email' => 'superadmin@harsasetialiving.com'],
             [
                 'name' => 'Super Admin',
                 'password' => Hash::make('password123'),
@@ -23,7 +23,7 @@ class UserSeeder extends Seeder
 
         // Admin biasa - tidak akses laporan
         User::updateOrCreate(
-            ['email' => 'admin@sewavip.com'],
+            ['email' => 'admin@harsasetialiving.com'],
             [
                 'name' => 'Admin',
                 'password' => Hash::make('password123'),
@@ -35,7 +35,7 @@ class UserSeeder extends Seeder
         // Customer - akan di-link ke tenant
         // Note: tenant_id harus di-set manual setelah ada data tenant
         User::updateOrCreate(
-            ['email' => 'customer@sewavip.com'],
+            ['email' => 'customer@harsasetialiving.com'],
             [
                 'name' => 'Customer Demo',
                 'password' => Hash::make('password123'),

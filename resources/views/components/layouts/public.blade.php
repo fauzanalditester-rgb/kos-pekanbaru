@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="SewaVIP - Sewa Kamar VIP Eksklusif di Pekanbaru">
-    <title>{{ $title ?? 'SewaVIP - Kamar VIP Eksklusif Pekanbaru' }}</title>
+    <meta name="description" content="Harsasetialiving - Sewa Kamar Kos Eksklusif di Pekanbaru">
+    <title>{{ $title ?? 'Harsasetialiving - Kamar Kos Eksklusif Pekanbaru' }}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
@@ -24,7 +24,7 @@
                     <div class="w-10 h-10 bg-slate-900 rounded-xl flex items-center justify-center shadow-md shadow-slate-900/10 group-hover:scale-105 transition-transform duration-300">
                         <svg class="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                     </div>
-                    <span class="text-xl font-extrabold tracking-tight text-slate-900">Sewa<span class="text-amber-500 font-medium">VIP.</span></span>
+                    <span class="text-xl font-extrabold tracking-tight text-slate-900">Harsasetia<span class="text-amber-500 font-medium">living</span></span>
                 </a>
                 <div class="hidden md:flex items-center gap-8">
                     <a href="#hero" class="text-sm font-semibold text-slate-500 hover:text-slate-900 transition-colors duration-200">Beranda</a>
@@ -57,9 +57,9 @@
             <div class="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-sm border border-slate-100">
                  <svg class="w-6 h-6 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
             </div>
-            <h3 class="text-lg font-bold text-slate-900 mb-2">SewaVIP Exclusive Kos</h3>
+            <h3 class="text-lg font-bold text-slate-900 mb-2">Harsasetialiving Exclusive Kos</h3>
             <p class="text-sm text-slate-500 max-w-md mx-auto leading-relaxed mb-8">Memberikan pengalaman menginap premium dengan privasi dan kenyamanan maksimal di jantung kota Pekanbaru.</p>
-            <div class="text-xs text-slate-400 font-medium tracking-wide uppercase">&copy; {{ date('Y') }} SewaVIP. All rights reserved.</div>
+            <div class="text-xs text-slate-400 font-medium tracking-wide uppercase">&copy; {{ date('Y') }} Harsasetialiving. All rights reserved.</div>
         </div>
     </footer>
 

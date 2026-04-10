@@ -42,7 +42,7 @@ new #[Layout('layouts.guest')] class extends Component
                     <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"/></svg>
                 </div>
                 <input wire:model="form.email" id="email" type="email" name="email" required autofocus autocomplete="username" 
-                    class="block w-full pl-11 pr-4 py-3.5 bg-gray-50 border-0 text-[#333333] rounded-2xl focus:bg-white focus:ring-2 focus:ring-[#FFCC00] focus:border-transparent transition-all sm:text-sm shadow-sm hover:bg-gray-100 placeholder-gray-400" placeholder="admin@sewavip.com" />
+                    class="block w-full pl-11 pr-4 py-3.5 bg-gray-50 border-0 text-[#333333] rounded-2xl focus:bg-white focus:ring-2 focus:ring-[#FFCC00] focus:border-transparent transition-all sm:text-sm shadow-sm hover:bg-gray-100 placeholder-gray-400" placeholder="admin@harsasetialiving.com" />
             </div>
             <x-input-error :messages="$errors->get('form.email')" class="mt-2 text-red-500 text-xs font-medium" />
         </div>
@@ -83,6 +83,6 @@ new #[Layout('layouts.guest')] class extends Component
     </form>
     
     <div class="mt-12 text-center text-xs text-gray-400 font-medium tracking-wide">
-        &copy; {{ date('Y') }} SewaVIP. Secured by System.
+        &copy; {{ date('Y') }} Harsasetialiving. All rights reserved.
     </div>
 </div>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - SewaVIP</title>
+    <title>Login - Harsasetialiving</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-900 min-h-screen flex items-center justify-center">
@@ -14,7 +14,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
                 </svg>
             </div>
-            <h1 class="text-2xl font-bold text-white">SewaVIP</h1>
+            <h1 class="text-2xl font-bold text-white">Harsasetialiving</h1>
             <p class="text-gray-400 text-sm mt-1">Sistem Manajemen Kos</p>
         </div>
 

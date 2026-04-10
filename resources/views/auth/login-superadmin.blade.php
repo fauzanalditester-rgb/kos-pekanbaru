@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Super Admin Login - SewaVIP</title>
+    <title>Super Admin Login - Harsasetialiving</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-purple-900 min-h-screen flex items-center justify-center">

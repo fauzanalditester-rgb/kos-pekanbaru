@@ -103,7 +103,7 @@ Route::middleware(['auth', 'role:super_admin'])->prefix('admin')->group(function
     Route::get('/laporan', FinanceManager::class)->name('admin.laporan');
     Route::get('/finances/export', function () {
         $finances = \App\Models\Finance::latest()->get();
-        $filename = "laporan_keuangan_sewavip_" . date('Y-m-d') . ".csv";
+        $filename = "laporan_keuangan_harsasetialiving_" . date('Y-m-d') . ".csv";
         $headers = [
             "Content-type"        => "text/csv",
             "Content-Disposition" => "attachment; filename=$filename",
